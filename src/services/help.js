@@ -13,6 +13,7 @@ ${chalk.green('Client commands:')}
   ${chalk.green('.monitor')}                      Starts monitoring cron messages for this process
   ${chalk.green('.unmonitor')}                    Stops monitoring cron messages for this process
   ${chalk.green('.editor')}                       Simple code editor for writing multi-line Lua expressions
+  ${chalk.green('.dryrun')}                       Toggle dryrun mode that sends every command as a dryrun and never saves memory
   ${chalk.green('.exit')}                         Close the client
   ${chalk.green('.help')}                         Print this help screen
   `)
@@ -31,6 +32,7 @@ ${chalk.green('Options:')}
   ${chalk.green('[name]')}                    The name of the process you want to spawn or connect to.
                             If you do not specify a name then "default" will be used.
   ${chalk.green('--wallet [file]')}           Set the wallet to interact with your process. By Default one is created for you at ~/.aos.json
+  ${chalk.green('--relay [relay-url]')}       Set the HyperBEAM Relay URL to handle payments in your process.
   ${chalk.green('--watch=[process]')}         Watch the console of a process, even if you are not the owner.
   ${chalk.green('--load [file]')}             Load Lua source file(s) into your process.
   ${chalk.green('--list')}                    Lists the processes for your wallet.

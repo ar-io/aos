@@ -1,39 +1,58 @@
 {
-  "type": "module",
   "name": "@permaweb/aos",
-  "version": "2.0.0",
+  "version": "2.0.3",
+  "private": true,
+  "repository": "https://github.com/permaweb/aos.git",
+  "license": "MIT",
+  "author": "Tom Wilson <tom@hyper.io>",
+  "type": "module",
   "main": "src/index.js",
   "bin": "./bin/aos.js",
-  "repository": "https://github.com/permaweb/aos.git",
-  "author": "Tom Wilson <tom@hyper.io>",
-  "license": "MIT",
+  "workspaces": [
+    "process",
+    "extensions/*"
+  ],
   "scripts": {
+    "build-docs": "rm -rf process/docs && ldoc .",
+    "deploy": "npx -y ardrive-cli@2.0.4 upload-file --turbo --local-path=./$(npm pack) -w ~/.wallet.json -F 0d009773-ce2c-4539-8e0d-c331db9ab348 | jq .created[0].dataTxId",
+    "generate-wallet": "node -e \"require('arweave').init({}).wallets.generate().then(JSON.stringify).then(console.log.bind(console))\" > wallet.json",
+    "staged": "lint-staged",
     "start": "node src/index.js",
     "test": "node --test test",
-    "generate-wallet": "node -e \"require('arweave').init({}).wallets.generate().then(JSON.stringify).then(console.log.bind(console))\" > wallet.json",
-    "deploy": "npx -y ardrive-cli@2.0.4 upload-file --turbo --local-path=./$(npm pack) -w ~/.wallet.json -F 0d009773-ce2c-4539-8e0d-c331db9ab348 | jq .created[0].dataTxId"
+    "test-all": "yarn workspaces --parallel run test"
   },
   "dependencies": {
-    "@permaweb/aoconnect": "^0.0.48",
+    "@permaweb/aoconnect": "^0.0.68",
     "arweave": "^1.15.1",
     "chalk": "^5.3.0",
     "figlet": "^1.7.0",
+    "http-message-signatures": "^1.0.4",
     "https-proxy-agent": "^7.0.4",
     "hyper-async": "^1.1.2",
     "minimist": "^1.2.8",
     "node-cron": "^3.0.3",
     "ora": "^7.0.1",
     "pretty-file-tree": "^1.0.1",
+    "prompts": "^2.4.2",
     "semver": "^7.5.4",
     "tar-stream": "^3.1.7",
     "yargs": "^17.7.2"
   },
-  "aos": {
-    "module": "zx6_08gJzKNXxLCplINj6TPv9-ElRgeRqr9F6riRBK8",
-    "sqlite": "CJ-iZL7RKNA43UZr3l6J5M8JegMP9RldoCoVge_vRuI",
-    "version": "2.0.0"
-  },
   "devDependencies": {
-    "esbuild": "^0.20.1"
+    "@commitlint/cli": "^19.5.0",
+    "@commitlint/config-conventional": "^19.5.0",
+    "@johnnymorganz/stylua-bin": "^0.20.0",
+    "esbuild": "^0.20.1",
+    "husky": "^9.1.6",
+    "lint-staged": "^15.2.10",
+    "markdown-toc-gen": "^1.1.0",
+    "sort-package-json": "^2.10.1",
+    "standard": "^17.1.2"
+  },
+  "aos": {
+    "module": "JArYBF-D8q2OmZ4Mok00sD2Y_6SYEQ7Hjx-6VZ_jl3g",
+    "sqlite": "33d-3X8mpv6xYBlVB-eXMrPfH5Kzf6Hiwhcv0UA10sw",
+    "llama": "-izm2qwp0PrqEGzNNu6ZiGXOpj9KgZcPEbwb3PR4Vrs",
+    "version": "2.0.3"
   }
 }

@@ -7,6 +7,9 @@ import fs from 'fs'
 import path from 'path'
 import os from 'os'
 import { uniqBy, prop, keys } from 'ramda'
+import Arweave from 'arweave'
+
+const arweave = Arweave.init({})
 
 
 const pkg = getPkg()
@@ -15,6 +18,13 @@ const getInfo = () => ({
   CU_URL: process.env.CU_URL,
   MU_URL: process.env.MU_URL
 })
+
+const retryAsync = (fn, left, right, retries = 3) =>
+  fn().bichain(
+    err => (retries > 0 ? retryAsync(fn, retries - 1) : left(err)),
+    res => right(res)
+  );
+
 
 export function readResult(params) {
 
@@ -28,6 +38,14 @@ export function readResult(params) {
     ),
       Resolved
     )
+}
+
+export function dryrun({ processId, wallet, tags, data }, spinnner) {
+  return fromPromise(() =>
+    arweave.wallets.jwkToAddress(wallet).then(Owner =>
+      connect(getInfo()).dryrun({ process: processId, Owner, tags, data })
+    )
+  )()
 }
 
 export function sendMessage({ processId, wallet, tags, data }, spinner) {
@@ -145,11 +163,11 @@ export async function live(id, watch) {
 
       try {
         isJobRunning = true;
-        let params = { process: id, limit: "1000" }
+        let params = { process: id, limit: 1000 }
         if (cursor) {
           params["from"] = cursor
         } else {
-          params["limit"] = 1
+          params["limit"] = 5
           params["sort"] = "DESC"
         }
 
