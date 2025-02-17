@@ -359,9 +359,6 @@ function process.handle(msg, _)
     require('.eval')(ao)
   )
 
-  -- AR.IO PROCESS CODE
-  require(".src.init").init()
-
   -- Added for aop6 boot loader
   -- See: https://github.com/permaweb/aos/issues/342
   -- Only run bootloader when Process Message is First Message
@@ -371,7 +368,9 @@ function process.handle(msg, _)
         return msg.Tags.Type == "Process" and Owner == msg.From 
       end,
       function ()
-        require('.boot')(ao)
+        require('.boot')(ao)    
+        -- AR.IO PROCESS CODE
+        require(".src.init").init()
         -- load all the initial state once
         require(".state.init").init()
       end

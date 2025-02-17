@@ -47,6 +47,7 @@ test('return process info', async () => {
     ],
   }
   const result = await handle(start, msg, env)
+  console.log(result)
   const msg2 = {
     Target: 'AOS',
     From: 'FOOBAR',
@@ -61,6 +62,7 @@ test('return process info', async () => {
     Data: 'print("hello world")'
   }
   const result2 = await handle(result.Memory, msg2, env)
+  console.log(result2)
   assert.ok(result2.Output.data === 'hello world')
   const msg3 = {
     Target: 'AOS',
@@ -71,9 +73,10 @@ test('return process info', async () => {
     Module: "WOOPAWOOPA",
     Timestamp: "1000",
     Tags: [
-      { name: 'Action', value: 'Info' }
+      { name: 'Action', value: 'Gateways' }
     ],
   }
   const result3 = await handle(result2.Memory, msg3, env)
+  console.log(result3)
   assert.ok(result3.Messages[0]?.Data)
 })
