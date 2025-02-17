@@ -1,13 +1,20 @@
 #!/bin/bash
 set -e
 
+# Clone the ar-io-network-process repo and copy src directory
+echo "Cloning ar-io-network-process repo..."
+git clone -b mainnet-globals https://github.com/ar-io/ar-io-network-process.git tmp-ar-io
+mkdir -p ./src
+cp -r tmp-ar-io/src/* ./src/
+rm -rf tmp-ar-io
+
 # Step 1: Build the project
 echo "Running: ao build"
 ao build
 
 # Step 2: Run tests
-echo "Running: npm run test test/into.test.js"
-npm run test test/into.test.js
+echo "Running: npm run test test/info.test.js"
+npm run test test/info.test.js
 
 # Step 3: Publish and capture output
 echo "Running: ao publish ... (capturing module ID)"

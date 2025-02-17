@@ -61,7 +61,7 @@ test('return process info', async () => {
     Data: 'print("hello world")'
   }
   const result2 = await handle(result.Memory, msg2, env)
-  assert.ok(result2.Messages[0]?.Data)
+  assert.ok(result2.Output.data === 'hello world')
   const msg3 = {
     Target: 'AOS',
     From: 'FOOBAR',
