@@ -8,4 +8,4 @@ process.wasm
 
 # ario src files
 src/
-state/
+# state/
