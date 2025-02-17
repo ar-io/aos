@@ -16,6 +16,11 @@ ao build
 echo "Running: npm run test test/info.test.js"
 npm run test test/info.test.js
 
+# if dry run, stop here
+if [ "$1" = "--dry-run" ]; then
+  exit 0
+fi
+
 # Step 3: Publish and capture output
 echo "Running: ao publish ... (capturing module ID)"
 publish_output=$(ao publish -w ./wallet.json ./process.wasm \

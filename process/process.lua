@@ -250,7 +250,7 @@ end
 -- @tparam {table} env The environment to initialize the state with
 local function initializeState(msg, env)
   if not Seeded then
-    chance.seed(tonumber(msg['Block-Height'] .. stringToSeed(msg.Owner .. "hello-there" .. msg.Id)))
+    chance.seed(tonumber(msg['Block-Height'] .. stringToSeed(msg.Owner .. (msg.Module or "") .. msg.Id)))
     math.random = function (...)
       local args = {...}
       local n = #args
