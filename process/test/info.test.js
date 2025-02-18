@@ -6,6 +6,14 @@ import fs from 'fs'
 const wasm = fs.readFileSync('./process.wasm')
 const options = { format: "wasm64-unknown-emscripten-draft_2024_02_15" }
 
+// REFERENCE: https://github.com/ar-io/ar-io-mainnet-csvs # TODO - set this as a hash
+const EXPECTED_RECORD_COUNT = 2882
+const EXPECTED_VAULT_COUNT = 1446
+const EXPECTED_GATEWAY_COUNT = 277
+const EXPECTED_PRIMARY_NAME_COUNT = 575
+const EXPECTED_BALANCE_COUNT = 9161
+const EXPECTED_TOTAL_SUPPLY = 10 ** 15; // 1B ARIO
+const EXPECTED_PROTOCOL_BALANCE = 65 * (10 ** 12); // 65M ARIO
 const env = {
   Process: {
     Id: 'AOS',
@@ -67,7 +75,7 @@ test('return preloaded gateways', async () => {
   })
   assert.ok(result.Messages[0]?.Data)
   const gateways = JSON.parse(result.Messages[0]?.Data)
-  assert.ok(gateways.totalItems === 277, `Total gateways is not 277: ${gateways.totalItems}`)
+  assert.ok(gateways.totalItems === EXPECTED_GATEWAY_COUNT, `Total gateways is not ${EXPECTED_GATEWAY_COUNT}: ${gateways.totalItems}`)
 })
 
 test('return preloaded records', async () => {
@@ -78,7 +86,7 @@ test('return preloaded records', async () => {
   })
   assert.ok(result.Messages[0]?.Data)
   const records = JSON.parse(result.Messages[0]?.Data)
-  assert.ok(records.totalItems === 2882, `Total records is not 1446: ${records.totalItems}`)
+  assert.ok(records.totalItems === EXPECTED_RECORD_COUNT, `Total records is not ${EXPECTED_RECORD_COUNT}: ${records.totalItems}`)
 })
 
 test('return preloaded vaults', async () => {
@@ -89,7 +97,7 @@ test('return preloaded vaults', async () => {
   })
   assert.ok(result.Messages[0]?.Data)
   const vaults = JSON.parse(result.Messages[0]?.Data)
-  assert.ok(vaults.totalItems === 1446, `Total vaults is not 1446: ${vaults.totalItems}`)
+  assert.ok(vaults.totalItems === EXPECTED_VAULT_COUNT, `Total vaults is not ${EXPECTED_VAULT_COUNT}: ${vaults.totalItems}`)
 })
 
 test('return preloaded primary names', async () => {
@@ -100,7 +108,7 @@ test('return preloaded primary names', async () => {
   })
   assert.ok(result.Messages[0]?.Data)
   const primaryNames = JSON.parse(result.Messages[0]?.Data)
-  assert.ok(primaryNames.totalItems === 575, `Total primary names is not 1446: ${primaryNames.totalItems}`)
+  assert.ok(primaryNames.totalItems === EXPECTED_PRIMARY_NAME_COUNT, `Total primary names is not ${EXPECTED_PRIMARY_NAME_COUNT}: ${primaryNames.totalItems}`)
 })
 
 test('return preloaded balances', async () => {
@@ -111,7 +119,7 @@ test('return preloaded balances', async () => {
   })
   assert.ok(result.Messages[0]?.Data)
   const balances = JSON.parse(result.Messages[0]?.Data)
-  assert.ok(Object.keys(balances).length === 9161, `Total balances is not 9161: ${Object.keys(balances).length}`)
+  assert.ok(Object.keys(balances).length === EXPECTED_BALANCE_COUNT, `Total balances is not ${EXPECTED_BALANCE_COUNT}: ${Object.keys(balances).length}`)
 })
 
 test('vaults', async () => {
@@ -123,7 +131,7 @@ test('vaults', async () => {
   assert.ok(result.Messages[0]?.Data)
   assert.ok(true)
   const vaults = JSON.parse(result.Messages[0]?.Data)
-  assert.ok(vaults.totalItems === 1446, `Total vaults is not 1446: ${vaults.totalItems}`)
+  assert.ok(vaults.totalItems === EXPECTED_VAULT_COUNT, `Total vaults is not ${EXPECTED_VAULT_COUNT}: ${vaults.totalItems}`)
 })
 
 test('total token supply', async () => {
@@ -134,8 +142,8 @@ test('total token supply', async () => {
   })
   assert.ok(result.Messages[0]?.Data)
   const supplyDetails = JSON.parse(result.Messages[0]?.Data)
-  assert.ok(supplyDetails.total === 10 ** 15, `Total supply is not 1B: ${supplyDetails.totalSupply} (difference: ${(10 ** 15 - supplyDetails.totalSupply) / 10 ** 6} IO)`)
-  assert.ok(supplyDetails.protocolBalance === 65 * (10 ** 12), `Protocol balance is not 65M IO: ${supplyDetails.protocolBalance}`)
+  assert.ok(supplyDetails.total === EXPECTED_TOTAL_SUPPLY, `Total supply is not 1B: ${supplyDetails.totalSupply} (difference: ${(EXPECTED_TOTAL_SUPPLY - supplyDetails.totalSupply) / 10 ** 6} IO)`)
+  assert.ok(supplyDetails.protocolBalance === EXPECTED_PROTOCOL_BALANCE, `Protocol balance is not 65M IO: ${supplyDetails.protocolBalance}`)
 })
 
 test('return total supply of 1B', async () => {
@@ -144,9 +152,7 @@ test('return total supply of 1B', async () => {
       { name: 'Action', value: 'Total-Supply' }
     ],
   })
-  console.log(result)
   const totalSupply = JSON.parse(result.Messages[0]?.Data)
   const expected = 10 ** 15
-  console.log(totalSupply, expected)
   assert.ok(totalSupply === expected, `Total supply is not 1B: ${totalSupply} (difference: ${(expected - totalSupply)} IO)`)
 })
