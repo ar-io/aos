@@ -1,4 +1,4 @@
-import { test } from 'node:test'
+import { test, before } from 'node:test'
 import * as assert from 'node:assert'
 import AoLoader from '@permaweb/ao-loader'
 import fs from 'fs'
@@ -11,72 +11,102 @@ const env = {
     Id: 'AOS',
     Owner: 'FOOBAR',
     Tags: [
-      { name: 'Name', value: 'Thomas' },
+      { name: 'Name', value: 'ARIO' },
       { name: 'Authority', value: 'FOOBAR' }
     ]
   }
 }
-
-async function init(handle) {
-  const result = await handle(null, {
+const handle = await AoLoader(wasm, options)
+const send = (memory, msg) => handle(memory, {
     Target: 'AOS',
     From: 'FOOBAR',
     Owner: 'FOOBAR',
     'Block-Height': '999',
     Id: 'AOS',
+    Timestamp: '1000',
     Module: 'WOOPAWOOPA',
-    Tags: [
-      { name: 'Name', value: 'Thomas' }
-    ]
-  }, env)
-  return result.Memory
-}
+    ...msg
+}, env)
+let start
 
-test('return process info', async () => {
-  const handle = await AoLoader(wasm, options)
-  const start = await init(handle)
+before(async () => {
+  // initialize initialize the wasm
+  const init = await send(null, {
+    Tags: [
+      { name: 'Name', value: 'ARIO' }
+    ]
+  })
+  // create the process
   const msg = {
-    Target: 'AOS',
-    From: 'FOOBAR',
-    Owner: 'FOOBAR',
-    ['Block-Height']: "1000",
-    Id: "1234xyxfoo",
-    Module: "WOOPAWOOPA",
     Tags: [
       { name: 'Type', value: 'Process'}
     ],
   }
-  const result = await handle(start, msg, env)
-  console.log(result)
-  const msg2 = {
-    Target: 'AOS',
-    From: 'FOOBAR',
-    Owner: 'FOOBAR',
-    ['Block-Height']: "1000",
-    Id: "1234xyxfoo",
-    Module: "WOOPAWOOPA",
-    Timestamp: "1000",
+  const createProcess = await send(init.Memory, msg)
+  start = createProcess.Memory
+})
+
+test('perform a simple eval', async () => {
+ const msg = {
     Tags: [
       { name: 'Action', value: 'Eval' }
     ],
     Data: 'print("hello world")'
   }
-  const result2 = await handle(result.Memory, msg2, env)
-  console.log(result2)
-  assert.ok(result2.Output.data === 'hello world')
-  const msg3 = {
-    Target: 'AOS',
-    From: 'FOOBAR',
-    Owner: 'FOOBAR',
-    ['Block-Height']: "1000",
-    Id: "1234xyxfoo",
-    Module: "WOOPAWOOPA",
-    Timestamp: "1000",
+  const result = await send(start, msg)
+  assert.ok(result.Output.data === 'hello world')
+})
+
+test('return preloaded gateways', async () => {
+  const result = await send(start, {
     Tags: [
       { name: 'Action', value: 'Gateways' }
     ],
-  }
-  const result3 = await handle(result2.Memory, msg3, env)
-  console.log(result3)
-  assert.ok(result3.Messages[0]?.Data)
+  })
+  assert.ok(result.Messages[0]?.Data)
+})
+
+test('return preloaded records', async () => {
+  const result = await send(start, {
+    Tags: [
+      { name: 'Action', value: 'Records' }
+    ],
+  })
+  assert.ok(result.Messages[0]?.Data)
+})
+
+test('return preloaded vaults', async () => {
+  const result = await send(start, {
+    Tags: [
+      { name: 'Action', value: 'Vaults' }
+    ],
+  })
+  assert.ok(result.Messages[0]?.Data)
+})
+
+test('return preloaded primary names', async () => {
+  const result = await send(start, {
+    Tags: [
+      { name: 'Action', value: 'Primary-Names' }
+    ],
+  })
+  assert.ok(result.Messages[0]?.Data)
+})
+
+test('return preloaded balances', async () => {
+  const result = await send(start, {
+    Tags: [
+      { name: 'Action', value: 'Balances' }
+    ],
+  })
+  assert.ok(result.Messages[0]?.Data)
+})
+
+test.skip('return total supply of 1B', async () => {
+  const result = await send(start, {
+    Tags: [
+      { name: 'Action', value: 'Total-Supply' }
+    ],
+  })
+  assert.ok(result.Messages[0]?.Data === 10 ** 15)
 })
