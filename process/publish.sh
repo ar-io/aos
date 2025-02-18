@@ -2,11 +2,24 @@
 set -e
 
 # Clone the ar-io-network-process repo and copy src directory
-echo "Cloning ar-io-network-process repo..."
-git clone -b mainnet-globals https://github.com/ar-io/ar-io-network-process.git tmp-ar-io
-mkdir -p ./src
-cp -r tmp-ar-io/src/* ./src/
-rm -rf tmp-ar-io
+if [ "$1" = "--reset" ]; then
+  echo "Refreshing directory..."
+  # Keep existing directory but remove contents
+  rm -rf ./src/*
+  echo "Cloning ar-io-network-process repo..."
+  git clone -b mainnet-globals https://github.com/ar-io/ar-io-network-process.git tmp-ar-io
+  mkdir -p ./src
+  cp -r tmp-ar-io/src/* ./src/
+  rm -rf tmp-ar-io
+
+  # copy state files from mainnet-csv repo
+  echo "Fetching finalized state from mainnet-csv repo..."
+  # https://github.com/ar-io/ar-io-mainnet-csvs
+  git clone https://github.com/ar-io/ar-io-mainnet-csvs tmp-mainnet-csv
+  cp -r tmp-mainnet-csv/state/* ./state/
+  rm -rf tmp-mainnet-csv
+  shift # remove --reset from arguments
+fi
 
 # Step 1: Build the project
 echo "Running: ao build"
