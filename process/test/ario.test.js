@@ -7,7 +7,7 @@ const wasm = fs.readFileSync('./process.wasm')
 const options = { format: "wasm64-unknown-emscripten-draft_2024_02_15" }
 
 // REFERENCE: https://github.com/ar-io/ar-io-mainnet-csvs # TODO - set this as a hash
-const EXPECTED_RECORD_COUNT = 2882
+const EXPECTED_RECORD_COUNT = 2884
 const EXPECTED_VAULT_COUNT = 1446
 const EXPECTED_GATEWAY_COUNT = 277
 const EXPECTED_PRIMARY_NAME_COUNT = 575
