@@ -341,3 +341,23 @@ test('create a vault', async () => {
   assert.ok(vaultDetails.balance === transferQty, 'Vault balance is not set')
   assert.ok(vaultDetails.endTimestamp === vaultDetails.startTimestamp + twoWeeksMs, 'Vault end timestamp is not set')
 })
+test('tick should create the genesis epoch', async () => {
+  const result = await send(start, {
+    Timestamp: '1741176000000', // 2025-03-04T12:00:00 UTC (7AM EST)
+    'Hash-Chain': 'somearbitraryhashchain',
+    Tags: [
+      { name: 'Action', value: 'Tick' }
+    ],
+  })
+  assert.ok(result.Messages[0]?.Data)
+  const demandFactorUpdatedNotice = result.Messages.find(msg => msg.Tags.find(tag => tag.name === 'Action' && tag.value === 'Demand-Factor-Updated-Notice'))
+  assert.ok(demandFactorUpdatedNotice, 'Demand factor updated notice not sent for genesis epoch')
+  const epochCreatedNotice = result.Messages.find(msg => msg.Tags.find(tag => tag.name === 'Action' && tag.value === 'Epoch-Created-Notice'))
+  assert.ok(epochCreatedNotice, 'Epoch created notice not sent for genesis epoch')
+  const epochCreatedNoticeData = JSON.parse(epochCreatedNotice.Data)
+  assert.ok(epochCreatedNoticeData.epochIndex === 0, `Epoch index is not 0: ${epochCreatedNoticeData.epochIndex}`)
+  assert.ok(epochCreatedNoticeData.startTimestamp === 1741176000000, `Epoch start timestamp is not 1741176000000: ${epochCreatedNoticeData.startTimestamp}`)
+  assert.ok(epochCreatedNoticeData.endTimestamp === epochCreatedNoticeData.startTimestamp + (24 * 60 * 60 * 1000), `Epoch end timestamp is not correct: ${epochCreatedNoticeData.endTimestamp}`)
+  assert.ok(Object.keys(epochCreatedNoticeData.prescribedObservers).length === 50, `Prescribed observers are not 50: ${Object.keys(epochCreatedNoticeData.prescribedObservers).length}`)
+  assert.ok(epochCreatedNoticeData.prescribedNames.length === 2, `Prescribed names are not 2: ${epochCreatedNoticeData.prescribedNames.length}`)
+})
