@@ -6,14 +6,14 @@ if [ "$1" = "--reset" ]; then
   echo "Refreshing directory..."
   rm -rf ./src
   echo "Cloning ar-io-network-process repo..."
+  # TODO: drop in a final hash of the network process source code
   git clone -b develop https://github.com/ar-io/ar-io-network-process.git tmp-ar-io
   mkdir -p ./src
   cp -r tmp-ar-io/src/* ./src/
   rm -rf tmp-ar-io
 
-  # copy state files from mainnet-csv repo
+  # TODO: drop in a final hash of the csvs and lua from this repo in place of develop branch
   echo "Fetching finalized state from mainnet-csv repo..."
-  # https://github.com/ar-io/ar-io-mainnet-csvs
   mkdir -p ./state
   git clone https://github.com/ar-io/ar-io-mainnet-csvs tmp-mainnet-csv
   cp -r tmp-mainnet-csv/state/* ./state/

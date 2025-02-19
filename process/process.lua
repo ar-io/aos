@@ -41,7 +41,7 @@ assignment.init(ao)
 
 local process = { _version = "2.0.3" }
 -- The maximum number of messages to store in the inbox
-local maxInboxCount = 10000
+local maxInboxCount = 10 -- reduced from 10000 to prevent spamming the inbox
 
 -- wrap ao.send and ao.spawn for magic table
 local aosend = ao.send
@@ -356,7 +356,7 @@ function process.handle(msg, _)
     function (msg)
       return msg.Action == "Eval" and Owner == msg.From
     end,
-    require('.eval')(ao)
+    require('.eval')(ao) -- TODO: add printing events here
   )
 
   -- Added for aop6 boot loader

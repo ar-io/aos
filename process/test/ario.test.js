@@ -11,7 +11,7 @@ const EXPECTED_RECORD_COUNT = 2882
 const EXPECTED_VAULT_COUNT = 1446
 const EXPECTED_GATEWAY_COUNT = 277
 const EXPECTED_PRIMARY_NAME_COUNT = 575
-const EXPECTED_BALANCE_COUNT = 9161
+const EXPECTED_BALANCE_COUNT = 9161 // TODO: confirm why 9183 balances after 200 ticks
 const EXPECTED_TOTAL_SUPPLY = 10 ** 15; // 1B ARIO
 const EXPECTED_PROTOCOL_BALANCE = 65 * (10 ** 12); // 65M ARIO
 const env = {
@@ -51,6 +51,7 @@ before(async () => {
     ],
   }
   const createProcess = await send(init.Memory, msg)
+  // TODO: confirm this catches any failed module references or bad wasm errors
   // assert there is no error log in create process
   assert.ok(!createProcess.Output.data.includes('error'))
   start = createProcess.Memory
@@ -65,6 +66,19 @@ test('perform a simple eval', async () => {
   }
   const result = await send(start, msg)
   assert.ok(result.Output.data === 'hello world')
+})
+
+test('eval from non-owner address fails', async () => {
+  const msg = {
+    From: 'non-owner',
+    Owner: 'non-owner',
+    Tags: [
+      { name: 'Action', value: 'Eval' }
+    ],
+    Data: 'print("hello world")'
+  }
+  const result = await send(start, msg)
+  assert.ok(result.Messages.length === 0)
 })
 
 test('return preloaded gateways', async () => {
@@ -312,6 +326,8 @@ test('join the network', async () => {
   assert.ok(joinNetworkDetails.weights.normalizedCompositeWeight === 0, 'Normalized composite weight is not 0')
 })
 
+// TODO: confirm demand factor starts at 2
+
 // create a vault
 test('create a vault', async () => {
   const recipient = 'dQzhAKa0qKPtMR8NuJAL2yB_qsT0QfAuc2CwtiUyhts'
@@ -360,4 +376,28 @@ test('tick should create the genesis epoch', async () => {
   assert.ok(epochCreatedNoticeData.endTimestamp === epochCreatedNoticeData.startTimestamp + (24 * 60 * 60 * 1000), `Epoch end timestamp is not correct: ${epochCreatedNoticeData.endTimestamp}`)
   assert.ok(Object.keys(epochCreatedNoticeData.prescribedObservers).length === 50, `Prescribed observers are not 50: ${Object.keys(epochCreatedNoticeData.prescribedObservers).length}`)
   assert.ok(epochCreatedNoticeData.prescribedNames.length === 2, `Prescribed names are not 2: ${epochCreatedNoticeData.prescribedNames.length}`)
+})
+
+
+test('tick to the 200th epoch and assert supply and supply is 1B', async () => {
+  const startTimestamp = 1741176000000
+  const epochPeriod = 24 * 60 * 60 * 1000
+  const futureEpochTimestamp = startTimestamp + (200 * epochPeriod)
+  const result = await send(start, {
+    Timestamp: futureEpochTimestamp,
+    'Hash-Chain': 'somearbitraryhashchain',
+    Tags: [
+      { name: 'Action', value: 'Tick' }
+    ],
+  })
+  assert.ok(result.Messages[0]?.Data)
+
+  // get the total supply again
+  const totalSupplyResult = await send(start, {
+    Tags: [
+      { name: 'Action', value: 'Total-Supply' }
+    ],
+  })
+  const totalSupply = JSON.parse(totalSupplyResult.Messages[0]?.Data)
+  assert.ok(totalSupply === 10 ** 15, 'Total supply is not 1B')
 })
