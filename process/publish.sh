@@ -6,7 +6,7 @@ if [ "$1" = "--reset" ]; then
   echo "Refreshing directory..."
   rm -rf ./src
   echo "Cloning ar-io-network-process repo..."
-  git clone -b develop https://github.com/ar-io/ar-io-network-process.git tmp-ar-io
+  git clone -b remove-crypto https://github.com/ar-io/ar-io-network-process.git tmp-ar-io
   mkdir -p ./src
   cp -r tmp-ar-io/src/* ./src/
   rm -rf tmp-ar-io
@@ -26,8 +26,8 @@ echo "Running: ao build"
 ao build
 
 # Step 2: Run tests
-echo "Running: npm run test test/info.test.js"
-npm run test test/info.test.js
+echo "Running: npm run test test/ario.test.js"
+npm run test test/ario.test.js
 
 # if dry run, stop here
 if [ "$1" = "--dry-run" ]; then
@@ -58,4 +58,4 @@ echo "Extracted Module ID: $MODULE_ID"
 
 # Step 5: Use the module ID in the final command
 echo "Running: aos -w ./wallet.json --module=$MODULE_ID"
-aos -w ./wallet.json --module=$MODULE_ID
+aos -w ./wallet.json --module=$MODULE_ID --cu-url https://cu.ar-io.dev
