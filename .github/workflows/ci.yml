@@ -52,6 +52,20 @@ jobs:
         run: |
           yarn
 
+      - name: 🐘 Download AR.IO Source Code and State
+        working-directory: process
+        run: |
+            git clone -b develop https://github.com/ar-io/ar-io-network-process.git tmp-ar-io
+            mkdir -p ./src
+            cp -r tmp-ar-io/src/* ./src/
+            rm -rf tmp-ar-io
+
+            # copy state files from mainnet-csv repo
+            mkdir -p ./state
+            git clone https://github.com/ar-io/ar-io-mainnet-csvs tmp-mainnet-csv
+            cp -r tmp-mainnet-csv/state/* ./state/
+            rm -rf tmp-mainnet-csv
+
       - name: 🏗 Build Process Module
         working-directory: process
         run: |

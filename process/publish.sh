@@ -6,7 +6,7 @@ if [ "$1" = "--reset" ]; then
   echo "Refreshing directory..."
   rm -rf ./src
   echo "Cloning ar-io-network-process repo..."
-  git clone -b mainnet-globals https://github.com/ar-io/ar-io-network-process.git tmp-ar-io
+  git clone -b develop https://github.com/ar-io/ar-io-network-process.git tmp-ar-io
   mkdir -p ./src
   cp -r tmp-ar-io/src/* ./src/
   rm -rf tmp-ar-io

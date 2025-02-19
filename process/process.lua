@@ -7,6 +7,8 @@ local coroutine = require('coroutine')
 -- set alias ao for .ao library
 if not _G.package.loaded['ao'] then _G.package.loaded['ao'] = require('.ao') end
 
+-- TODO: confirm .crypto.init is set in the global scope
+
 Colors = {
   red = "\27[31m",
   green = "\27[32m",
