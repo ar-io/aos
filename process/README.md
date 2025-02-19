@@ -89,10 +89,10 @@ default@aos-2.0.3[Inbox:0]> .editor
 <editor mode> use '.done' to submit or '.cancel' to cancel
 -- update the start timestamp for all gateways
 for address, gateway in pairs(GatewayRegistry) do
-  gateway.startTimestamp = 1739934000000
+  gateway.startTimestamp = 1740000300000
 end
 -- update the epoch settings to start the epochs
-EpochSettings.epochZeroStartTimestamp = 1739934000000
+EpochSettings.epochZeroStartTimestamp = 1740000300000
 -- shorten the epoch duration for rapid live testing
 EpochSettings.durationMs = 300000
 .done
@@ -104,11 +104,14 @@ Next - you'll need to create a separate process to tick the state. Align the tic
 > aos --cron 5-minutes
 default@aos-2.0.3[Inbox:0]> .editor
 Target = Target or "<INSERT PROCESS ID HERE>"
--- handler task to execute on cron message
-Handlers.add("cron", "Cron", function() 
-  ao.send({ Target = Target, Action = "Tick" })
-end)
-.done
+Handlers.add(
+	"CronTick", -- handler name
+	Handlers.utils.hasMatchingTag("Action", "Cron"), -- handler pattern to identify cron message
+	function() -- handler task to execute on cron message
+		ao.send({ Target = Target, Action = "Tick" })
+	end
+)
+
 default@aos-2.0.3[Inbox:0]> .monitor
 ```
 
