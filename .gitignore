@@ -2,6 +2,7 @@ node_modules
 wallet.json
 tom.json
 aos.json
+*.json
 
 # prettier config
 .prettierrc
