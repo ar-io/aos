@@ -91,7 +91,7 @@ EpochSettings.durationMs = 300000
 .done
 ```
 
-Next - you'll need to create a separate process to tick the state. Align the tick interval with the epoch duration.
+Next - you'll need to create a separate process to tick the state. Align the tick interval with the epoch duration. Once the handler is added, be sure to run `.monitor` in aos to enable the ticking. Ideally this is done at the approximate minute mark of the epoch.
 
 ```bash
 > aos --cron 5-minutes
@@ -102,12 +102,11 @@ Handlers.add("cron", "Cron", function()
   ao.send({ Target = Target, Action = "Tick" })
 end)
 .done
+default@aos-2.0.3[Inbox:0]> .monitor
 ```
 
-Once crated, review [ao.link](https://ao.link) to ensure the process is working as expected. You can also navigate to the network portal https://ar-io-network-portal-a40ee--pr167-process-tester-do-no-sajky343.web.app/#/dashboard to review the process state and epochs.
+Once created, review [ao.link](https://ao.link) to ensure the process is working as expected. You can also navigate to the network portal https://ar-io-network-portal-a40ee--pr167-process-tester-do-no-sajky343.web.app/#/dashboard to review the process state and epochs.
 
 ### Additional Tools
 
 - Once the process is created - you can use the [AR.IO Github Action](https://github.com/ar-io/ar-io-network-process/actions/workflows/monitor_ad_hoc.yaml) to validate the process state. This tests runs e2e tests against the `ar-io-sdk` and inspects invariants in the initial state.
-
-
