@@ -36,10 +36,11 @@ It also modified the `process.lua` file to work with the AR.IO process, while re
 The module configuration can be found in config.yaml. It contains the following:
 
 ```yaml
-stack_size: 33554432 # 32Mib of stack
-initial_memory: 50331648 # 48Mib of initial memory
-maximum_memory: 8589934592 # 8Gib of maximum memory
-target: 64 # wasm 64 target
+# Reference: https://github.com/permaweb/ao/blob/f7e93fea35b98c5e20e105d903080c67775885f3/dev-cli/container/src/ao-build-module
+stack_size: 33554432 # 32Mib
+initial_memory: 50331648 # 48Mib
+maximum_memory: 17179869184 # 16Gib
+target: 64
 ```
 
 ### Creating a new AR.IO process from scratch
