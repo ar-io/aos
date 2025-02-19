@@ -358,7 +358,7 @@ function process.handle(msg, _)
     end,
     function (msg)    
       print('{ "_e": 1, "Message-Id": "' .. msg.Id .. '", "From": "' .. msg.From .. '", "Action": "' .. msg.Action .. '", "Timestamp": ' .. tonumber(msg.Timestamp) .. '}')
-      return require('.eval')(ao)(msg)
+      require('.eval')(ao)(msg)
     end
   )
 
@@ -370,8 +370,8 @@ function process.handle(msg, _)
       function (msg)
         return msg.Tags.Type == "Process" and Owner == msg.From 
       end,
-      function ()
-        require('.boot')(ao)    
+      function (msg)
+        require('.boot')(ao)(msg)
         -- AR.IO PROCESS CODE
         require(".src.init").init()
         -- load all the initial state once
@@ -381,8 +381,8 @@ function process.handle(msg, _)
   end
 
   Handlers.append("_default", function () return true end, function (msg)
-    print('{ "_e": 1, "Message-Id": "' .. msg.Id .. '", "From": "' .. msg.From .. '", "Action": "' .. msg.Action .. '", "Timestamp": ' .. tonumber(msg.Timestamp) .. ', "Default-Handler": true}')
-    return require('.default')(insertInbox)(msg)
+    print('{ "_e": 1, "Message-Id": "' .. msg.Id .. '", "From": "' .. msg.From .. '", "Action": "' .. tostring(msg.Action) .. '", "Timestamp": ' .. tonumber(msg.Timestamp) .. ', "Default-Handler": true}')
+    require('.default')(insertInbox)(msg)
   end)
 
   -- call evaluate from handlers passing env
