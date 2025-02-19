@@ -64,11 +64,9 @@ Note: `./publish.sh` creates the module with the following commands:
 ```bash
 ao publish -w ./wallet.json ./process.wasm \
   -t Compute-Limit -v 9000000000000 \
-  -t Memory-Limit -v 8589934592 \
-  -t Name -v aos-test-2.0.4 \
-  -t Module-Format -v wasm64-unknown-emscripten-draft_2024_02_15 \
-  --bundler https://up.arweave.net)
-  ```
+  -t Memory-Limit -v 17179869184 \
+  --bundler https://up.arweave.net
+```
 
 Modify the `./publish.sh` script to change the module name and format as needed.
 
@@ -77,7 +75,15 @@ Modify the `./publish.sh` script to change the module name and format as needed.
 Once the process is created - it's essential to validate the ticking mechanism is working as expected. To do so, you can set the following on the created AR.IO process from the aos console:
 
 ```bash
-> aos --process <INSERT PROCESS ID HERE> --cu-url https://cu.ar-io.dev
+> aos ario-mainnet -w ./wallet.json --module=$MODULE_ID --cu-url https://cu.ar-io.dev \
+  --tag-name Execution-Device --tag-value genesis-wasm@1.0 \
+  --tag-name Scheduler-Device --tag-value scheduler@1.0 \
+  --tag-name Device --tag-value process@1.0
+```
+
+Once the process is created - you can use the following command to update the state and start ticking epochs:
+
+```bash
 default@aos-2.0.3[Inbox:0]> .editor
 <editor mode> use '.done' to submit or '.cancel' to cancel
 -- update the start timestamp for all gateways

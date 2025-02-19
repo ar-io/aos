@@ -38,7 +38,7 @@ fi
 echo "Running: ao publish ... (capturing module ID)"
 publish_output=$(ao publish -w ./wallet.json ./process.wasm \
   -t Compute-Limit -v 9000000000000 \
-  -t Memory-Limit -v 8589934592 \
+  -t Memory-Limit -v 17179869184 \
   --bundler https://up.arweave.net)
 
 # Optionally display the full publish output

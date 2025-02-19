@@ -357,7 +357,7 @@ function process.handle(msg, _)
       return msg.Action == "Eval" and Owner == msg.From
     end,
     function (msg)    
-      print('{ "_e": 1, "Message-Id": "' .. msg.Id .. '", "Message-From": "' .. msg.From .. '", "Action": "' .. msg.Action .. '", "Timestamp": "' .. msg.Timestamp .. '"}')
+      print('{ "_e": 1, "Message-Id": "' .. msg.Id .. '", "From": "' .. msg.From .. '", "Action": "' .. msg.Action .. '", "Timestamp": ' .. tonumber(msg.Timestamp) .. '}')
       return require('.eval')(ao)(msg)
     end
   )
@@ -381,7 +381,7 @@ function process.handle(msg, _)
   end
 
   Handlers.append("_default", function () return true end, function (msg)
-    print('{ "_e": 1, "Message-Id": "' .. msg.Id .. '", "Message-From": "' .. msg.From .. '", "Action": "' .. msg.Action .. '", "Timestamp": "' .. msg.Timestamp .. '", "Default-Handler": true}')
+    print('{ "_e": 1, "Message-Id": "' .. msg.Id .. '", "From": "' .. msg.From .. '", "Action": "' .. msg.Action .. '", "Timestamp": ' .. tonumber(msg.Timestamp) .. ', "Default-Handler": true}')
     return require('.default')(insertInbox)(msg)
   end)
 

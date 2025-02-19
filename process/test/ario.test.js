@@ -67,9 +67,9 @@ test('perform a simple eval', async () => {
   const result = await send(start, msg)
   const output = result.Output.data
   assert.ok(output.includes('"Message-Id": "'))
-  assert.ok(output.includes('"Message-From": "FOOBAR"'))
+  assert.ok(output.includes('"From": "FOOBAR"'))
   assert.ok(output.includes('"Action": "Eval"'))
-  assert.ok(output.includes('"Timestamp": "1740009600000"'))
+  assert.ok(output.includes('"Timestamp": 1740009600000'))
   assert.ok(output.includes('hello world'))
 })
 
@@ -94,10 +94,10 @@ test('log an event on default handler getting called', async () => {
   })
   const output = result.Output.data
   assert.ok(output.includes('"Message-Id": "'))
-  assert.ok(output.includes('"Message-From": "FOOBAR"'))
+  assert.ok(output.includes('"From": "FOOBAR"'))
   assert.ok(output.includes('"Default-Handler": true'))
   assert.ok(output.includes('"Action": "Not-An-Action"'))
-  assert.ok(output.includes('"Timestamp": "1740009600000"'))
+  assert.ok(output.includes('"Timestamp": 1740009600000'))
   assert.ok(result.Messages.length === 0)
 })
 
