@@ -1,3 +1,4 @@
+# Reference: https://github.com/permaweb/ao/blob/f7e93fea35b98c5e20e105d903080c67775885f3/dev-cli/container/src/ao-build-module
 stack_size: 33554432 # 32Mib
 initial_memory: 50331648 # 48Mib
 maximum_memory: 8589934592 # 8Gib
