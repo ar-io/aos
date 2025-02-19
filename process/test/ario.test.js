@@ -65,7 +65,12 @@ test('perform a simple eval', async () => {
     Data: 'print("hello world")'
   }
   const result = await send(start, msg)
-  assert.ok(result.Output.data === 'hello world')
+  const output = result.Output.data
+  assert.ok(output.includes('"Message-Id": "'))
+  assert.ok(output.includes('"Message-From": "FOOBAR"'))
+  assert.ok(output.includes('"Action": "Eval"'))
+  assert.ok(output.includes('"Timestamp": "1740009600000"'))
+  assert.ok(output.includes('hello world'))
 })
 
 test('eval from non-owner address fails', async () => {
@@ -78,6 +83,21 @@ test('eval from non-owner address fails', async () => {
     Data: 'print("hello world")'
   }
   const result = await send(start, msg)
+  assert.ok(result.Messages.length === 0)
+})
+
+test('log an event on default handler getting called', async () => {
+  const result = await send(start, {
+    Tags: [
+      { name: 'Action', value: 'Not-An-Action' }
+    ],
+  })
+  const output = result.Output.data
+  assert.ok(output.includes('"Message-Id": "'))
+  assert.ok(output.includes('"Message-From": "FOOBAR"'))
+  assert.ok(output.includes('"Default-Handler": true'))
+  assert.ok(output.includes('"Action": "Not-An-Action"'))
+  assert.ok(output.includes('"Timestamp": "1740009600000"'))
   assert.ok(result.Messages.length === 0)
 })
 

@@ -356,7 +356,10 @@ function process.handle(msg, _)
     function (msg)
       return msg.Action == "Eval" and Owner == msg.From
     end,
-    require('.eval')(ao) -- TODO: add printing events here
+    function (msg)    
+      print('{ "_e": 1, "Message-Id": "' .. msg.Id .. '", "Message-From": "' .. msg.From .. '", "Action": "' .. msg.Action .. '", "Timestamp": "' .. msg.Timestamp .. '"}')
+      return require('.eval')(ao)(msg)
+    end
   )
 
   -- Added for aop6 boot loader
@@ -377,7 +380,10 @@ function process.handle(msg, _)
     )
   end
 
-  Handlers.append("_default", function () return true end, require('.default')(insertInbox))
+  Handlers.append("_default", function () return true end, function (msg)
+    print('{ "_e": 1, "Message-Id": "' .. msg.Id .. '", "Message-From": "' .. msg.From .. '", "Action": "' .. msg.Action .. '", "Timestamp": "' .. msg.Timestamp .. '", "Default-Handler": true}')
+    return require('.default')(insertInbox)(msg)
+  end)
 
   -- call evaluate from handlers passing env
   msg.reply =
