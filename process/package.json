@@ -5,7 +5,9 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "@permaweb/ao-loader": "^0.0.44"
+    "@permaweb/ao-loader": "^0.0.44",
+    "@permaweb/aos": "^1.2.18",
+    "global": "^4.4.0"
   },
   "scripts": {
     "build": "ao build",

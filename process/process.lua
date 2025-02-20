@@ -2,14 +2,14 @@
 -- @module process
 
 -- @dependencies
-local pretty = require('.pretty')
-local base64 = require('.base64')
-local json = require('json')
 local chance = require('.chance')
-local crypto = require('.crypto.init')
 local coroutine = require('coroutine')
 -- set alias ao for .ao library
 if not _G.package.loaded['ao'] then _G.package.loaded['ao'] = require('.ao') end
+
+if not _G.package.loaded['.crypto.init'] then
+  _G.package.loaded['.crypto.init'] = require('.crypto.init')
+end
 
 Colors = {
   red = "\27[31m",
@@ -41,7 +41,7 @@ assignment.init(ao)
 
 local process = { _version = "2.0.3" }
 -- The maximum number of messages to store in the inbox
-local maxInboxCount = 10000
+local maxInboxCount = 10 -- reduced from 10000 to prevent spamming the inbox
 
 -- wrap ao.send and ao.spawn for magic table
 local aosend = ao.send
@@ -316,7 +316,7 @@ function process.handle(msg, _)
   ao.id = ao.env.Process.Id
   initializeState(msg, ao.env)
   HANDLER_PRINT_LOGS = {}
-  
+
   -- set os.time to return msg.Timestamp
   os.time = function () return msg.Timestamp end
 
@@ -356,7 +356,10 @@ function process.handle(msg, _)
     function (msg)
       return msg.Action == "Eval" and Owner == msg.From
     end,
-    require('.eval')(ao)
+    function (msg)    
+      print('{ "_e": 1, "Message-Id": "' .. msg.Id .. '", "From": "' .. msg.From .. '", "Action": "' .. msg.Action .. '", "Timestamp": ' .. tonumber(msg.Timestamp) .. '}')
+      require('.eval')(ao)(msg)
+    end
   )
 
   -- Added for aop6 boot loader
@@ -367,11 +370,20 @@ function process.handle(msg, _)
       function (msg)
         return msg.Tags.Type == "Process" and Owner == msg.From 
       end,
-      require('.boot')(ao)
+      function (msg)
+        require('.boot')(ao)(msg)
+        -- AR.IO PROCESS CODE
+        require(".src.init").init()
+        -- load all the initial state once
+        require(".state.init").init()
+      end
     )
   end
 
-  Handlers.append("_default", function () return true end, require('.default')(insertInbox))
+  Handlers.append("_default", function () return true end, function (msg)
+    print('{ "_e": 1, "Message-Id": "' .. msg.Id .. '", "From": "' .. msg.From .. '", "Action": "' .. tostring(msg.Action) .. '", "Timestamp": ' .. tonumber(msg.Timestamp) .. ', "Default-Handler": true}')
+    require('.default')(insertInbox)(msg)
+  end)
 
   -- call evaluate from handlers passing env
   msg.reply =

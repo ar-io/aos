@@ -5,3 +5,7 @@ yarn.lock
 # binaries
 process.js
 process.wasm
+
+# ario src files
+src/
+state/
