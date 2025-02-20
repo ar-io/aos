@@ -56,7 +56,7 @@ echo "Extracted Module ID: $MODULE_ID"
 
 # Step 5: Use the module ID in the final command
 echo "Running: aos -w ./wallet.json --module=$MODULE_ID"
-aos -w ./wallet.json --module=$MODULE_ID --cu-url https://cu.ar-io.dev \
+aos --wallet ./wallet.json --module=$MODULE_ID --cu-url https://cu.ar-io.dev \
   --tag-name Execution-Device --tag-value genesis-wasm@1.0 \
   --tag-name Scheduler-Device --tag-value scheduler@1.0 \
   --tag-name Device --tag-value process@1.0

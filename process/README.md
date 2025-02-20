@@ -76,7 +76,7 @@ Modify the `./publish.sh` script to change the module name and format as needed.
 Once the process is created - it's essential to validate the ticking mechanism is working as expected. To do so, you can set the following on the created AR.IO process from the aos console:
 
 ```bash
-> aos ario-mainnet -w ./wallet.json --module=$MODULE_ID --cu-url https://cu.ar-io.dev \
+> aos ario-mainnet --wallet ./wallet.json --module=$MODULE_ID --cu-url https://cu.ar-io.dev \
   --tag-name Execution-Device --tag-value genesis-wasm@1.0 \
   --tag-name Scheduler-Device --tag-value scheduler@1.0 \
   --tag-name Device --tag-value process@1.0
