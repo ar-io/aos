@@ -2,6 +2,7 @@ import { test, before } from 'node:test'
 import * as assert from 'node:assert'
 import AoLoader from '@permaweb/ao-loader'
 import fs from 'fs'
+import { time } from 'node:console'
 
 const wasm = fs.readFileSync('./process.wasm')
 const options = { format: "wasm64-unknown-emscripten-draft_2024_02_15" }
@@ -420,4 +421,24 @@ test('tick to the 200th epoch and assert supply and supply is 1B', async () => {
   })
   const totalSupply = JSON.parse(totalSupplyResult.Messages[0]?.Data)
   assert.ok(totalSupply === 10 ** 15, 'Total supply is not 1B')
+})
+
+test('all vaults get removed once they are expired', async () => {
+  const timestamp = 1929312000000 // latest vault end timestamp from imported vaults
+  const result = await send(start, {
+    Timestamp: timestamp,
+    Tags: [
+      { name: 'Action', value: 'Info' }
+    ],
+  })
+
+  // the vaults should now be empty
+  const vaultsResult = await send(result.Memory, {
+    Timestamp: timestamp,
+    Tags: [
+      { name: 'Action', value: 'Vaults' }
+    ],
+  })
+  const vaults = JSON.parse(vaultsResult.Messages[0]?.Data)
+  assert.ok(vaults.totalItems === 0, 'Vaults are not pruned, expected 0, got ' + vaults.totalItems + `${vaults}`)
 })
